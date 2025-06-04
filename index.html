@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Account Sync</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>Account Management</h1>
+    
+    <!-- Sync Section -->
+    <section class="section">
+      <h2>Sync Accounts</h2>
+      <button onclick="syncAccounts()" class="sync-button">Sync Accounts</button>
+      <div id="sync-status" class="status"></div>
+      <pre id="sync-debug" class="debug-output"></pre>
+    </section>
+
+    <!-- Account Manager Search Section -->
+    <section class="section">
+      <h2>Search by Account Manager</h2>
+      <div class="search-form">
+        <input 
+          type="email" 
+          id="manager-email" 
+          placeholder="Enter account manager email"
+          class="email-input"
+        />
+        <button onclick="getAccountsByManager()" class="search-button">Search</button>
+      </div>
+      <div id="search-status" class="status"></div>
+      <pre id="search-debug" class="debug-output"></pre>
+    </section>
+
+    <!-- CYCLR Accounts Section -->
+    <section class="section">
+      <h2>CYCLR Accounts</h2>
+      <button onclick="getCyclrAccounts()" class="sync-button">Get CYCLR Accounts</button>
+      <div id="cyclr-status" class="status"></div>
+      <pre id="cyclr-debug" class="debug-output"></pre>
+    </section>
+
+    <!-- Integration Dates Section -->
+    <section class="section">
+      <h2>Accounts with Integration Dates</h2>
+      <button onclick="getAccountsWithIntegrationDates()" class="sync-button">Show Accounts</button>
+      <div id="integration-dates-status" class="status"></div>
+      <pre id="integration-dates-debug" class="debug-output"></pre>
+    </section>
+
+    <script>
+      async function syncAccounts() {
+        const statusDiv = document.getElementById('sync-status');
+        const debugDiv = document.getElementById('sync-debug');
+        statusDiv.textContent = 'Syncing accounts...';
+        debugDiv.textContent = '';
+        
+        try {
+          const response = await fetch('/api/sync-accounts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          const data = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(JSON.stringify({
+              status: response.status,
+              error: data.error,
+              details: data.details
+            }, null, 2));
+          }
+          
+          statusDiv.textContent = data.message || 'Sync completed';
+          debugDiv.textContent = JSON.stringify({
+            message: data.message,
+            count: data.count,
+            accounts: data.accounts
+          }, null, 2);
+        } catch (error) {
+          statusDiv.textContent = 'Error syncing accounts';
+          debugDiv.textContent = 'Error Details:\n' + error.message;
+          console.error('Sync Error:', error.message);
+        }
+      }
+
+      async function getAccountsByManager() {
+        const email = document.getElementById('manager-email').value.trim();
+        const statusDiv = document.getElementById('search-status');
+        const debugDiv = document.getElementById('search-debug');
+        
+        if (!email) {
+          statusDiv.textContent = 'Please enter an email address';
+          debugDiv.textContent = '';
+          return;
+        }
+
+        statusDiv.textContent = 'Fetching accounts...';
+        debugDiv.textContent = '';
+        
+        try {
+          const response = await fetch(`/api/accounts/manager/${encodeURIComponent(email)}`);
+          const data = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(JSON.stringify({
+              status: response.status,
+              error: data.error,
+              details: data.details
+            }, null, 2));
+          }
+          
+          statusDiv.textContent = `Found ${data.accounts.length} account(s) for ${data.account_manager}`;
+          debugDiv.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          statusDiv.textContent = 'Error fetching accounts';
+          debugDiv.textContent = 'Error Details:\n' + error.message;
+          console.error('Search Error:', error.message);
+        }
+      }
+
+      async function getCyclrAccounts() {
+        const statusDiv = document.getElementById('cyclr-status');
+        const debugDiv = document.getElementById('cyclr-debug');
+        statusDiv.textContent = 'Fetching CYCLR accounts...';
+        debugDiv.textContent = '';
+        
+        try {
+          const response = await fetch('./api/cyclr-accounts');
+          const data = await response.json();
+          console.log(data);
+          
+          if (!response.ok) {
+            throw new Error(JSON.stringify({
+              status: response.status,
+              error: data.error,
+              details: data.details
+            }, null, 2));
+          }
+          
+          statusDiv.textContent = 'CYCLR accounts fetched successfully';
+          debugDiv.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          statusDiv.textContent = 'Error fetching CYCLR accounts';
+          debugDiv.textContent = 'Error Details:\n' + error.message;
+          console.error('CYCLR Error:', error.message);
+        }
+      }
+
+      async function getAccountsWithIntegrationDates() {
+        const statusDiv = document.getElementById('integration-dates-status');
+        const debugDiv = document.getElementById('integration-dates-debug');
+        statusDiv.textContent = 'Fetching accounts...';
+        debugDiv.textContent = '';
+        
+        try {
+          const response = await fetch('/api/accounts/with-integration-dates');
+          const data = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(JSON.stringify({
+              status: response.status,
+              error: data.error,
+              details: data.details
+            }, null, 2));
+          }
+          
+          statusDiv.textContent = `Found ${data.accounts.length} account(s) with integration dates`;
+          debugDiv.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          statusDiv.textContent = 'Error fetching accounts';
+          debugDiv.textContent = 'Error Details:\n' + error.message;
+          console.error('Integration Dates Error:', error.message);
+        }
+      }
+    </script>
+  </body>
+</html>
