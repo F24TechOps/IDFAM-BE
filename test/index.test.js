@@ -2,13 +2,13 @@ const supertest = require("supertest");
 const app = require("../index.js");
 const fs = require("fs");
 const request = supertest(app);
-const data = require("../F24Ids.json");
+const data = require("../data/F24Ids.json");
 
-beforeAll(async () => {
-  await request.get("/api/cyclr-token");
-});
+// beforeAll(async () => {
+//   await request.get("/api/cyclr-token");
+// });
 
-describe.skip("get cyclr token", () => {
+describe("get cyclr token", () => {
   test("token", async () => {
     return await request
       .get("/api/cyclr-token")
@@ -131,7 +131,7 @@ describe.skip("get the methods", () => {
   });
 });
 
-describe("get unfinished transactions", () => {
+describe.skip("get unfinished transactions", () => {
   test("responds with a 200", async () => {
     return await request.get("/api/unfinished_transactions").expect(200);
   });

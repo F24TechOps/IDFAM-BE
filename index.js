@@ -6,26 +6,32 @@ const cron = require("node-cron");
 require("dotenv").config();
 const qs = require("qs");
 const fs = require("fs");
-const writeXlsxFile = require("write-excel-file/node");
-const readXlsxFile = require("read-excel-file/node");
-const cyclrJson = require("./cyclr-accounts.json");
+// const writeXlsxFile = require("write-excel-file/node");
+// const readXlsxFile = require("read-excel-file/node");
+// const cyclrJson = require("./cyclr-accounts.json");
+const { getCyclrAccounts, getCyclrAccount, getCyclrAccountByCyclrID } = require("./controllers/cyclr.controllers")
 
 const app = express();
-
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
-);
 
 let cyclrAccessToken;
 let force24AccessToken;
 
 app.use(express.static("static"));
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
   res.sendFile(resolve(__dirname, "pages/index.html"));
 });
+
+// kp messing
+
+app.get("/api/cyclr-accounts", getCyclrAccounts)
+
+app.get("/api/cyclr/client_id/:accountid/:accountName", getCyclrAccount)
+
+app.get("/api/cyclr/client_id/:cyclrName/:force24Id", getCyclrAccountByCyclrID)
+
 
 // Fetch CYCLR token
 app.get("/api/cyclr-token", async (req, res) => {
@@ -118,7 +124,7 @@ app.get("/api/cyclr-accounts", async (req, res, next) => {
   }
 });
 
-app.get("/api/client_id/:accountid/:accountName", async (req, res, next) => {
+app.get("/api/cyclr/client_id/:accountid/:accountName", async (req, res, next) => {
   const { accountid, accountName } = req.params;
 
   try {
@@ -142,13 +148,6 @@ app.get("/api/client_id/:accountid/:accountName", async (req, res, next) => {
       "Cyclr Name": accountName,
     };
 
-    console.log(
-      "Multiple styles: %cred %corange",
-      "color: red",
-      "color: orange",
-      "Additional unformatted message"
-    );
-
     // if (!fs.existsSync('./clientId.json')) {
     //   fs.writeFileSync('./clientId.json', JSON.stringify([]));
     //   const initialData = [accObj];
@@ -165,7 +164,7 @@ app.get("/api/client_id/:accountid/:accountName", async (req, res, next) => {
   }
 });
 
-app.put("/api/client_id/:cyclrName/:force24Id", async (req, res) => {
+app.put("/api/cyclr/client_id/:cyclrName/:force24Id", async (req, res) => {
   const { cyclrName, force24Id } = req.params;
 
   console.log(`→ Processing: ${cyclrName} / ${force24Id}`);
