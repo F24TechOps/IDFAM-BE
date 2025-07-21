@@ -2,7 +2,7 @@ const axios = require("axios");
 require("dotenv").config();
 const qs = require("qs");
 
-export async function fetchCyclrToken() {
+exports.fetchCyclrToken = async () => {
   try {
     const token = await axios.post(
       "https://apiintegrations.force24.co.uk/oauth/token",
@@ -14,7 +14,7 @@ export async function fetchCyclrToken() {
     );
 
     const cyclrAccessToken = token.data.access_token;
-    return await cyclrAccessToken
+    return cyclrAccessToken
   } catch (err) {
     console.log(err);
   }

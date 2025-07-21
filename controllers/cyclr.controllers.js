@@ -16,8 +16,8 @@ exports.getCyclrAccounts = (req, res, next) => {
 };
 
 exports.getCyclrAccount = (req, res, next) => {
-  const { accountid, accountName } = req.params;
-  fetchCyclrAccount(accountid, accountName)
+  const { accountid } = req.params;
+  fetchCyclrAccount(accountid)
     .then((cyclrRes) => {
       return res.status(200).send({ data: cyclrRes.data });
     })
@@ -44,3 +44,5 @@ exports.getCyclrAccountByCyclrID = (req, res, next) => {
     res.status(200).json(response.data);
   });
 };
+
+

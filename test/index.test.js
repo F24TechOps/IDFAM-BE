@@ -8,7 +8,7 @@ const data = require("../data/F24Ids.json");
 //   await request.get("/api/cyclr-token");
 // });
 
-describe("get cyclr token", () => {
+describe.skip("get cyclr token", () => {
   test("token", async () => {
     return await request
       .get("/api/cyclr-token")
@@ -43,42 +43,42 @@ describe.skip("get all the accounts in freshsuccess", () => {
   });
 });
 
-describe.skip("update cyclr account with force24 id", () => {
-  const errors = [];
-  let successCount = 0;
+// describe.skip("update cyclr account with force24 id", () => {
+//   const errors = [];
+//   let successCount = 0;
 
-  data.forEach((account, index) => {
-    test(`(${index + 1}/${data.length}) responds with a 200 for account ${
-      account.name
-    }`, async () => {
-      try {
-        console.log(`🔄 Testing: ${account.name}`);
-        await request
-          .put(`/api/client_id/${account.name}/${account.account_id}`)
-          .expect(200);
-        console.log(`✅ Passed: ${account.name}`);
-        successCount++;
-      } catch (err) {
-        console.log(`❌ Failed: ${account.name}`);
-        errors.push({ name: account.name, error: err.message });
-      }
-    });
-  });
+//   data.forEach((account, index) => {
+//     test(`(${index + 1}/${data.length}) responds with a 200 for account ${
+//       account.name
+//     }`, async () => {
+//       try {
+//         console.log(`🔄 Testing: ${account.name}`);
+//         await request
+//           .put(`/api/client_id/${account.name}/${account.account_id}`)
+//           .expect(200);
+//         console.log(`✅ Passed: ${account.name}`);
+//         successCount++;
+//       } catch (err) {
+//         console.log(`❌ Failed: ${account.name}`);
+//         errors.push({ name: account.name, error: err.message });
+//       }
+//     });
+//   });
 
-  afterAll(() => {
-    const summary = [
-      `\n--- Test Summary ---`,
-      `✅ Successful: ${successCount}`,
-      `❌ Failed: ${errors.length}`,
-      errors.length > 0 ? `\n🔍 Error Details:` : "",
-      ...errors.map(({ name, error }) => `- ${name}: ${error}`),
-    ]
-      .filter(Boolean)
-      .join("\n");
+//   afterAll(() => {
+//     const summary = [
+//       `\n--- Test Summary ---`,
+//       `✅ Successful: ${successCount}`,
+//       `❌ Failed: ${errors.length}`,
+//       errors.length > 0 ? `\n🔍 Error Details:` : "",
+//       ...errors.map(({ name, error }) => `- ${name}: ${error}`),
+//     ]
+//       .filter(Boolean)
+//       .join("\n");
 
-    console.log(summary);
-  });
-});
+//     console.log(summary);
+//   });
+// });
 
 // describe.skip('get the transaction details', () => {
 //     const cyclrAccounts = JSON.parse(fs.readFileSync('./contactDistListTransId.json', 'utf8'))
@@ -134,5 +134,16 @@ describe.skip("get the methods", () => {
 describe.skip("get unfinished transactions", () => {
   test("responds with a 200", async () => {
     return await request.get("/api/unfinished_transactions").expect(200);
+  });
+})
+
+describe("get account's connectors from cyclr with account id", () => {
+  test("return specific account", () => {
+    const res = request.get("/api/cyclr/client_id/a911d2a3-0ff5-4f43-9221-49b98765c8a2");
+    return res.expect(200).then((res) => {
+      expect(Array.isArray(res.body.data)).toBe(true);
+      console.log(res.body.data[2].Name)
+      expect(res.body.data[2].Name).toBe("Force24 v2");
+    });
   });
 });

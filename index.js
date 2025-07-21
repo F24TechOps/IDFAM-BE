@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/cyclr-accounts", getCyclrAccounts)
 
-app.get("/api/cyclr/client_id/:accountid/:accountName", getCyclrAccount)
+app.get("/api/cyclr/client_id/:accountid", getCyclrAccount)
 
 app.get("/api/cyclr/client_id/:cyclrName/:force24Id", getCyclrAccountByCyclrID)
 

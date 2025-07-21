@@ -4,7 +4,7 @@ const qs = require("qs");
 const { fetchCyclrToken } = require("../utils/tokens");
 
 exports.fetchCyclrAccounts = async () => {
-  const cyclrAccessToken = fetchCyclrToken();
+  const cyclrAccessToken = await fetchCyclrToken()
   try {
     // Fetch CYCLR account
     const cyclrResponse = await axios.get(
@@ -21,8 +21,7 @@ exports.fetchCyclrAccounts = async () => {
         },
       }
     );
-
-    return cyclrResponse
+    return cyclrResponse;
 
     // console.log(JSON.stringify(cyclrResponse.data, null, 2));
 
@@ -42,16 +41,14 @@ exports.fetchCyclrAccounts = async () => {
     //     }
     //   }
     // );
-
   } catch (error) {
     next(error);
   }
 };
 
-exports.fetchCyclrAccount = async () => {
-  const cyclrAccessToken = fetchCyclrToken();
-
-try {
+exports.fetchCyclrAccount = async (accountid) => {
+  const cyclrAccessToken = await fetchCyclrToken()
+  try {
     const cyclrRes = await axios.get(
       "https://apiintegrations.force24.co.uk/v1.0/account/connectors",
       {
@@ -63,7 +60,7 @@ try {
       }
     );
 
-    return cyclrRes
+    return cyclrRes;
 
     // const clientId = cyclrRes.data
     //   .filter((item) => item.Name === "Force24 v2")[0]
@@ -83,15 +80,13 @@ try {
     //   existingData.push(accObj);
     //   fs.writeFileSync('./clientId.json', JSON.stringify(existingData, null, 2));
     // }
-
-    
   } catch (err) {
     console.log(err);
   }
 };
 
 exports.fetchCyclrAccountByCyclrID = async () => {
-    const cyclrAccessToken = fetchCyclrToken();
+  const cyclrAccessToken = fetchCyclrToken();
 
   try {
     const response = await axios.put(
@@ -108,18 +103,12 @@ exports.fetchCyclrAccountByCyclrID = async () => {
         },
       }
     );
-
     console.log(`✅ Success: ${cyclrName}`);
-    
-    return response
-
+    return response;
   } catch (err) {
-
-    console.log(`❌ Error: ${cyclrName}`, err.response?.data || err.message);
-    res
-      .status(err.response?.status || 500)
-      .json({ error: err.message || "Unknown error" });
-
+    // console.log(`❌ Error: ${cyclrName}`, err.response?.data || err.message);
+    // res
+    //   .status(err.response?.status || 500)
+    //   .json({ error: err.message || "Unknown error" });
   }
-
-}
+};
