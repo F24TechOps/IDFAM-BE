@@ -21,7 +21,7 @@ app.use(express.static("static"));
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.sendFile(resolve(__dirname, "pages/index.html"));
+  res.json({status: `is running`})
 });
 
 // kp messing
